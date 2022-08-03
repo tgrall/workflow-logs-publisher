@@ -1,11 +1,13 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Workflow log publisher'
+description: 'Publish workflow logs to a destination'
+author: 'Tug Grall @tgrall'
 inputs:
-  milliseconds: # change this
+  repo-token:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'GitHub token to access repo data'
 runs:
   using: 'node16'
   main: 'dist/index.js'
+branding:
+  icon: 'file-text'  
+  color: 'blue'  
