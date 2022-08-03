@@ -14,7 +14,9 @@ export async function run(): Promise<void> {
         const workflowId: string = process.env['GITHUB_RUN_ID'] || '';
         const repo: string = process.env['GITHUB_REPOSITORY'] || ''
 
-        const payload = JSON.stringify(github.context.payload, undefined, 2)
+        
+
+        const payload = JSON.stringify(github.context, undefined, 2)
         core.info(`The event payload: ${payload}`);
 
         const workflowLogFile: string = await gh.fetchLogsForWorkflow(client, repo, workflowId);
