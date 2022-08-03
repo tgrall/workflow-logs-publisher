@@ -11,7 +11,7 @@ export async function run(): Promise<void> {
         const client: HttpClient = gh.getClient(ghToken);
 
         // get workflow id see https://docs.github.com/en/actions/learn-github-actions/environment-variables
-        const workflowId: string = process.env['GITHUB_RUN_ID'] || '';
+        const workflowId: string = github.context.payload.runId || '';
         const repo: string = process.env['GITHUB_REPOSITORY'] || ''
 
         
