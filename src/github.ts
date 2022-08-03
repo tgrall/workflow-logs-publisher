@@ -1,4 +1,5 @@
 import {HttpClient, HttpClientResponse} from '@actions/http-client'
+import {createWriteStream} from 'fs'
 
 const githubAPIUrl = 'https://api.github.com'
 
@@ -56,9 +57,15 @@ export async function fetchLogsForWorkflow(
     if (res.message.statusCode === undefined || res.message.statusCode >= 400) {
       throw new Error(`HTTP request failed: ${res.message.statusMessage}`)
     }
-    const body: string = await res.readBody();
-    console.log(body);
+
+    // write to a temp file
     const tmpfile = `./out-${runId}.log`;
+    const out = createWriteStream(tmpfile);
+
+    const body: string = await res.readBody();
+    out.write(body);
+    out.end();
+    
     // save file locally
     return tmpfile;
   }    

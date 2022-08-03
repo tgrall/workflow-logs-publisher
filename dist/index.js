@@ -18,6 +18,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.fetchLogsForJob = exports.fetchLogsForWorkflow = exports.fetchJobs = exports.getClient = void 0;
 const http_client_1 = __nccwpck_require__(925);
+const fs_1 = __nccwpck_require__(747);
 const githubAPIUrl = 'https://api.github.com';
 function getClient(ghToken) {
     return new http_client_1.HttpClient('gh-http-client', [], {
@@ -59,9 +60,12 @@ function fetchLogsForWorkflow(httpClient, repo, runId) {
         if (res.message.statusCode === undefined || res.message.statusCode >= 400) {
             throw new Error(`HTTP request failed: ${res.message.statusMessage}`);
         }
-        const body = yield res.readBody();
-        console.log(body);
+        // write to a temp file
         const tmpfile = `./out-${runId}.log`;
+        const out = (0, fs_1.createWriteStream)(tmpfile);
+        const body = yield res.readBody();
+        out.write(body);
+        out.end();
         // save file locally
         return tmpfile;
     });

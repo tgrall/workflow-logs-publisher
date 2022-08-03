@@ -1,6 +1,7 @@
 import * as core from '@actions/core'
 import {HttpClient} from '@actions/http-client'
 import * as gh from './github'
+import {createWriteStream} from 'fs'
 
 export async function run(): Promise<void> {
     try {
