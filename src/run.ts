@@ -4,7 +4,6 @@ import * as gh from './github'
 
 export async function run(): Promise<void> {
     try {
-        core.info('Inside run block');
         const ghToken: string = core.getInput('repo-token', {required: true});
 
         // authenticated client to call APIs
@@ -12,7 +11,25 @@ export async function run(): Promise<void> {
 
         // get workflow id see https://docs.github.com/en/actions/learn-github-actions/environment-variables
         const workflowId: string = process.env['GITHUB_RUN_ID'] || '';
-        core.info("workflowId: " + workflowId);
+        const repo: string = process.env['GITHUB_REPOSITORY'] || ''
+
+
+        const jobs: gh.Job[] = await gh.fetchJobs(
+            client,
+            repo,
+            workflowId,
+            []
+          )
+          
+        core.debug(`Getting logs for ${jobs.length} jobs for workflow ${workflowId}`);
+        for (const j of jobs) {
+            const lines: string[] = await gh.fetchLogs(client, repo, j);
+            core.debug(`Fetched ${lines.length} lines for job ${j.name}`);
+      
+            const tmpfile = `./out-${j.id}.log`;
+            core.debug(`Writing to ${tmpfile}`);
+        }
+
 
     } catch (e) {
         core.setFailed(`Run failed: ${e}`);
