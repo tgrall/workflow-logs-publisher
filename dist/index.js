@@ -134,6 +134,8 @@ function run() {
             // get workflow id see https://docs.github.com/en/actions/learn-github-actions/environment-variables
             const workflowId = github.context.payload.runId || '';
             const repo = process.env['GITHUB_REPOSITORY'] || '';
+            core.debug(`workflowId: ${workflowId}`);
+            core.debug(`repo: ${repo}`);
             const payload = JSON.stringify(github.context, undefined, 2);
             core.info(`The event payload: ${payload}`);
             const workflowLogFile = yield gh.fetchLogsForWorkflow(client, repo, workflowId);

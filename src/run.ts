@@ -13,7 +13,8 @@ export async function run(): Promise<void> {
         // get workflow id see https://docs.github.com/en/actions/learn-github-actions/environment-variables
         const workflowId: string = github.context.payload.runId || '';
         const repo: string = process.env['GITHUB_REPOSITORY'] || ''
-
+        core.debug(`workflowId: ${workflowId}`);
+        core.debug(`repo: ${repo}`);
         
 
         const payload = JSON.stringify(github.context, undefined, 2)
