@@ -13,22 +13,24 @@ export async function run(): Promise<void> {
         const workflowId: string = process.env['GITHUB_RUN_ID'] || '';
         const repo: string = process.env['GITHUB_REPOSITORY'] || ''
 
+        const workflowLogFile: string = await gh.fetchLogsForWorkflow(client, repo, workflowId);
 
-        const jobs: gh.Job[] = await gh.fetchJobs(
-            client,
-            repo,
-            workflowId,
-            []
-          )
+
+        // const jobs: gh.Job[] = await gh.fetchJobs(
+        //     client,
+        //     repo,
+        //     workflowId,
+        //     []
+        //   )
           
-        core.debug(`Getting logs for ${jobs.length} jobs for workflow ${workflowId}`);
-        for (const j of jobs) {
-            const lines: string[] = await gh.fetchLogs(client, repo, j);
-            core.debug(`Fetched ${lines.length} lines for job ${j.name}`);
+        // core.debug(`Getting logs for ${jobs.length} jobs for workflow ${workflowId}`);
+        // for (const j of jobs) {
+        //     const lines: string[] = await gh.fetchLogsForJob(client, repo, j);
+        //     core.debug(`Fetched ${lines.length} lines for job ${j.name}`);
       
-            const tmpfile = `./out-${j.id}.log`;
-            core.debug(`Writing to ${tmpfile}`);
-        }
+        //     const tmpfile = `./out-${j.id}.log`;
+        //     core.debug(`Writing to ${tmpfile}`);
+        // }
 
 
     } catch (e) {

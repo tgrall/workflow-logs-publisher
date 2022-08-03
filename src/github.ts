@@ -47,7 +47,24 @@ export async function fetchJobs(
   return jobs
 }
 
-export async function fetchLogs(
+export async function fetchLogsForWorkflow(
+  httpClient: HttpClient,
+  repo: string,
+  runId: string): Promise<string> {
+    const url = `${githubAPIUrl}/repos/${repo}/actions/runs/${runId}/logs`;
+    const res: HttpClientResponse = await httpClient.get(url);
+    if (res.message.statusCode === undefined || res.message.statusCode >= 400) {
+      throw new Error(`HTTP request failed: ${res.message.statusMessage}`)
+    }
+    const body: string = await res.readBody();
+    console.log(body);
+    const tmpfile = `./out-${runId}.log`;
+    // save file locally
+    return tmpfile;
+  }    
+
+
+export async function fetchLogsForJob(
   httpClient: HttpClient,
   repo: string,
   job: Job

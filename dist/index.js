@@ -16,7 +16,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.fetchLogs = exports.fetchJobs = exports.getClient = void 0;
+exports.fetchLogsForJob = exports.fetchLogsForWorkflow = exports.fetchJobs = exports.getClient = void 0;
 const http_client_1 = __nccwpck_require__(925);
 const githubAPIUrl = 'https://api.github.com';
 function getClient(ghToken) {
@@ -52,7 +52,22 @@ function fetchJobs(httpClient, repo, runId, allowList) {
     });
 }
 exports.fetchJobs = fetchJobs;
-function fetchLogs(httpClient, repo, job) {
+function fetchLogsForWorkflow(httpClient, repo, runId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const url = `${githubAPIUrl}/repos/${repo}/actions/runs/${runId}/logs`;
+        const res = yield httpClient.get(url);
+        if (res.message.statusCode === undefined || res.message.statusCode >= 400) {
+            throw new Error(`HTTP request failed: ${res.message.statusMessage}`);
+        }
+        const body = yield res.readBody();
+        console.log(body);
+        const tmpfile = `./out-${runId}.log`;
+        // save file locally
+        return tmpfile;
+    });
+}
+exports.fetchLogsForWorkflow = fetchLogsForWorkflow;
+function fetchLogsForJob(httpClient, repo, job) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `${githubAPIUrl}/repos/${repo}/actions/jobs/${job.id}/logs`;
         const res = yield httpClient.get(url);
@@ -63,7 +78,7 @@ function fetchLogs(httpClient, repo, job) {
         return body.split('\n');
     });
 }
-exports.fetchLogs = fetchLogs;
+exports.fetchLogsForJob = fetchLogsForJob;
 
 
 /***/ }),
@@ -114,14 +129,20 @@ function run() {
             // get workflow id see https://docs.github.com/en/actions/learn-github-actions/environment-variables
             const workflowId = process.env['GITHUB_RUN_ID'] || '';
             const repo = process.env['GITHUB_REPOSITORY'] || '';
-            const jobs = yield gh.fetchJobs(client, repo, workflowId, []);
-            core.debug(`Getting logs for ${jobs.length} jobs for workflow ${workflowId}`);
-            for (const j of jobs) {
-                const lines = yield gh.fetchLogs(client, repo, j);
-                core.debug(`Fetched ${lines.length} lines for job ${j.name}`);
-                const tmpfile = `./out-${j.id}.log`;
-                core.debug(`Writing to ${tmpfile}`);
-            }
+            const workflowLogFile = yield gh.fetchLogsForWorkflow(client, repo, workflowId);
+            // const jobs: gh.Job[] = await gh.fetchJobs(
+            //     client,
+            //     repo,
+            //     workflowId,
+            //     []
+            //   )
+            // core.debug(`Getting logs for ${jobs.length} jobs for workflow ${workflowId}`);
+            // for (const j of jobs) {
+            //     const lines: string[] = await gh.fetchLogsForJob(client, repo, j);
+            //     core.debug(`Fetched ${lines.length} lines for job ${j.name}`);
+            //     const tmpfile = `./out-${j.id}.log`;
+            //     core.debug(`Writing to ${tmpfile}`);
+            // }
         }
         catch (e) {
             core.setFailed(`Run failed: ${e}`);
