@@ -1,6 +1,5 @@
 import * as core from '@actions/core'
-const github = require('@actions/github');
-
+import github from '@actions/github'
 import {HttpClient} from '@actions/http-client'
 import * as gh from './github'
 
