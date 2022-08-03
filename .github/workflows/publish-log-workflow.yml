@@ -5,6 +5,7 @@ on:
     inputs:
       save-artifact:
         required: false
+        type: boolean
         default: false
     secrets:
       token:
