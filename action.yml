@@ -3,7 +3,7 @@ description: 'Publish workflow logs to a destination'
 author: 'Tug Grall @tgrall'
 inputs:
   repo-token:
-    required: true
+    required: false
     description: 'GitHub token to access repo data'
 runs:
   using: 'node16'
