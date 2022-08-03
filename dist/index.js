@@ -134,6 +134,8 @@ function run() {
             const workflowId = process.env['GITHUB_RUN_ID'] || '';
             const repo = process.env['GITHUB_REPOSITORY'] || '';
             const workflowLogFile = yield gh.fetchLogsForWorkflow(client, repo, workflowId);
+            core.debug(`workflow-log-file : ${workflowLogFile}`);
+            core.setOutput('workflow-log-file', workflowLogFile);
             // const jobs: gh.Job[] = await gh.fetchJobs(
             //     client,
             //     repo,

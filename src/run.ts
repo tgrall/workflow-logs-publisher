@@ -1,7 +1,6 @@
 import * as core from '@actions/core'
 import {HttpClient} from '@actions/http-client'
 import * as gh from './github'
-import {createWriteStream} from 'fs'
 
 export async function run(): Promise<void> {
     try {
@@ -15,6 +14,8 @@ export async function run(): Promise<void> {
         const repo: string = process.env['GITHUB_REPOSITORY'] || ''
 
         const workflowLogFile: string = await gh.fetchLogsForWorkflow(client, repo, workflowId);
+        core.debug(`workflow-log-file : ${workflowLogFile}`);
+        core.setOutput('workflow-log-file', workflowLogFile );
 
 
         // const jobs: gh.Job[] = await gh.fetchJobs(
