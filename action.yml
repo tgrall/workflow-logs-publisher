@@ -5,6 +5,10 @@ inputs:
   repo-token:
     required: true
     description: 'GitHub token to access repo data'
+  save-artifact:
+    required: false
+    description: 'Save the log as artifact'
+    default: false
 runs:
   using: 'node16'
   main: 'dist/index.js'
