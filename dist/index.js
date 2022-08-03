@@ -108,13 +108,20 @@ const gh = __importStar(__nccwpck_require__(928));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            core.info('Inside run block');
             const ghToken = core.getInput('repo-token', { required: true });
             // authenticated client to call APIs
             const client = gh.getClient(ghToken);
             // get workflow id see https://docs.github.com/en/actions/learn-github-actions/environment-variables
             const workflowId = process.env['GITHUB_RUN_ID'] || '';
-            core.info("workflowId: " + workflowId);
+            const repo = process.env['GITHUB_REPOSITORY'] || '';
+            const jobs = yield gh.fetchJobs(client, repo, workflowId, []);
+            core.debug(`Getting logs for ${jobs.length} jobs for workflow ${workflowId}`);
+            for (const j of jobs) {
+                const lines = yield gh.fetchLogs(client, repo, j);
+                core.debug(`Fetched ${lines.length} lines for job ${j.name}`);
+                const tmpfile = `./out-${j.id}.log`;
+                core.debug(`Writing to ${tmpfile}`);
+            }
         }
         catch (e) {
             core.setFailed(`Run failed: ${e}`);
