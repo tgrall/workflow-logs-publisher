@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import github from '@actions/github'
+import * as github from '@actions/github'
 import {HttpClient} from '@actions/http-client'
 import * as gh from './github'
 
