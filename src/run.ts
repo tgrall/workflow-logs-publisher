@@ -1,4 +1,6 @@
 import * as core from '@actions/core'
+const github = require('@actions/github');
+
 import {HttpClient} from '@actions/http-client'
 import * as gh from './github'
 
@@ -12,6 +14,9 @@ export async function run(): Promise<void> {
         // get workflow id see https://docs.github.com/en/actions/learn-github-actions/environment-variables
         const workflowId: string = process.env['GITHUB_RUN_ID'] || '';
         const repo: string = process.env['GITHUB_REPOSITORY'] || ''
+
+        const payload = JSON.stringify(github.context.payload, undefined, 2)
+        core.info(`The event payload: ${payload}`);
 
         const workflowLogFile: string = await gh.fetchLogsForWorkflow(client, repo, workflowId);
         core.debug(`workflow-log-file : ${workflowLogFile}`);
