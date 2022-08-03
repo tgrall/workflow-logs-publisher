@@ -132,7 +132,7 @@ function run() {
             // authenticated client to call APIs
             const client = gh.getClient(ghToken);
             // get workflow id see https://docs.github.com/en/actions/learn-github-actions/environment-variables
-            const workflowId = github.context.payload.runId || '';
+            const workflowId = github.context.runId.toString() || '';
             const repo = process.env['GITHUB_REPOSITORY'] || '';
             core.debug(`workflowId: ${workflowId}`);
             core.debug(`repo: ${repo}`);
