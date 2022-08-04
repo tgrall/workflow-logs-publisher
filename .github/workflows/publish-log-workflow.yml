@@ -1,0 +1,23 @@
+name: Publish Workflow
+
+on:
+  workflow_call:
+    inputs:
+      save-artifact:
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      token:
+        required: true
+
+jobs:
+  publish-log:
+    name: Pass input and secrets to my-action
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish Logs
+        id: publish-logs
+        uses: tgrall/workflow-logs-publisher@dev
+        with:
+          repo-token : ${{ secrets.token }}
