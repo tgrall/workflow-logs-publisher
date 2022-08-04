@@ -2,7 +2,9 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import {HttpClient} from '@actions/http-client'
 import * as gh from './github'
-import {createWriteStream} from 'fs'
+import * as artifact from '@actions/artifact'
+const artifactClient = artifact.create()
+
 
 export async function run(): Promise<void> {
     try {
@@ -40,6 +42,10 @@ export async function run(): Promise<void> {
             workflowLogFiles.push(tmpfile);
         }
         core.setOutput('workflow-log-file', workflowLogFiles );
+        const options = {
+            continueOnError: true
+        }        
+        const uploadResult = await artifactClient.uploadArtifact("job-logs", workflowLogFiles, "/", options)
 
     } catch (e) {
         core.setFailed(`Run failed: ${e}`);
