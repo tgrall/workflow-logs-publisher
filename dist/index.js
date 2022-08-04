@@ -149,6 +149,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = exports.getCommaSeparatedInput = void 0;
 const core = __importStar(__nccwpck_require__(2186));
+const fs = __importStar(__nccwpck_require__(5747));
 const gh = __importStar(__nccwpck_require__(5928));
 const artifact = __importStar(__nccwpck_require__(2605));
 const artifactClient = artifact.create();
@@ -190,6 +191,16 @@ function run() {
             const options = {
                 continueOnError: true
             };
+            //check that allf file exists if not remove them from the list
+            workflowLogFiles = workflowLogFiles.filter(file => {
+                if (fs.existsSync(file)) {
+                    return true;
+                }
+                else {
+                    core.warning(`File ${file} does not exist`);
+                    return false;
+                }
+            });
             const uploadResult = yield artifactClient.uploadArtifact("job-logs", workflowLogFiles, ".", options);
         }
         catch (e) {

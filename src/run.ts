@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import * as github from '@actions/github'
+import * as fs from 'fs'
 import {HttpClient} from '@actions/http-client'
 import * as gh from './github'
 import * as artifact from '@actions/artifact'
@@ -52,6 +52,17 @@ export async function run(): Promise<void> {
         const options = {
             continueOnError: true
         }        
+
+        //check that allf file exists if not remove them from the list
+        workflowLogFiles = workflowLogFiles.filter(file => {
+            if (fs.existsSync(file)) {
+                return true;
+            } else {
+                core.warning(`File ${file} does not exist`);
+                return false;
+            }
+        } )        
+
         const uploadResult = await artifactClient.uploadArtifact("job-logs", workflowLogFiles, ".", options)
 
     } catch (e) {
