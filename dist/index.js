@@ -125,6 +125,7 @@ exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const gh = __importStar(__nccwpck_require__(5928));
+const fs_1 = __nccwpck_require__(5747);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -138,25 +139,20 @@ function run() {
             core.debug(`repo: ${repo}`);
             const context = JSON.stringify(github.context, undefined, 2);
             core.info(`The event context: ${context}`);
-            const workflowLogFile = yield gh.fetchLogsForWorkflow(client, repo, workflowId);
-            core.debug(`workflow-log-file : ${workflowLogFile}`);
-            core.setOutput('workflow-log-file', workflowLogFile);
-            // const jobs: gh.Job[] = await gh.fetchJobs(
-            //     client,
-            //     repo,
-            //     workflowId,
-            //     []
-            //   )
-            // core.debug(`Getting logs for ${jobs.length} jobs for workflow ${workflowId}`);
-            // for (const j of jobs) {
-            //     const lines: string[] = await gh.fetchLogsForJob(client, repo, j);
-            //     core.debug(`Fetched ${lines.length} lines for job ${j.name}`);
-            //     const tmpfile = `./out-${j.id}.log`;
-            //     core.info(`Writing to ${tmpfile}`);
-            //     const out = createWriteStream(tmpfile);
-            //     out.write(lines);
-            //     out.end();            
-            // }
+            // const workflowLogFile: string = await gh.fetchLogsForWorkflow(client, repo, workflowId);
+            // core.debug(`workflow-log-file : ${workflowLogFile}`);
+            // core.setOutput('workflow-log-file', workflowLogFile );
+            const jobs = yield gh.fetchJobs(client, repo, workflowId, []);
+            core.info(`Getting logs for ${jobs.length} jobs for workflow ${workflowId}`);
+            for (const j of jobs) {
+                const lines = yield gh.fetchLogsForJob(client, repo, j);
+                core.debug(`Fetched ${lines.length} lines for job ${j.name}`);
+                const tmpfile = `./out-${j.id}.log`;
+                core.info(`Writing to ${tmpfile}`);
+                const out = (0, fs_1.createWriteStream)(tmpfile);
+                out.write(lines);
+                out.end();
+            }
         }
         catch (e) {
             core.setFailed(`Run failed: ${e}`);
