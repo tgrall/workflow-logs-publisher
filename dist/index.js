@@ -146,11 +146,14 @@ function run() {
             // core.debug(`workflow-log-file : ${workflowLogFile}`);
             // core.setOutput('workflow-log-file', workflowLogFile );
             const jobs = yield gh.fetchJobs(client, repo, workflowId, []);
+            let workflowLogFiles = [];
             core.info(`Getting logs for ${jobs.length} jobs for workflow ${workflowId}`);
             for (const j of jobs) {
                 const tmpfile = yield gh.fetchLogsForJob(client, repo, j);
                 core.info(`Writing to ${tmpfile}`);
+                workflowLogFiles.push(tmpfile);
             }
+            core.setOutput('workflow-log-file', workflowLogFiles);
         }
         catch (e) {
             core.setFailed(`Run failed: ${e}`);
