@@ -52,7 +52,7 @@ export async function run(): Promise<void> {
         const options = {
             continueOnError: true
         }        
-        const uploadResult = await artifactClient.uploadArtifact("job-logs", workflowLogFiles, "/", options)
+        const uploadResult = await artifactClient.uploadArtifact("job-logs", workflowLogFiles, ".", options)
 
     } catch (e) {
         core.setFailed(`Run failed: ${e}`);

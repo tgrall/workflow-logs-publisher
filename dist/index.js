@@ -190,7 +190,7 @@ function run() {
             const options = {
                 continueOnError: true
             };
-            const uploadResult = yield artifactClient.uploadArtifact("job-logs", workflowLogFiles, "/", options);
+            const uploadResult = yield artifactClient.uploadArtifact("job-logs", workflowLogFiles, ".", options);
         }
         catch (e) {
             core.setFailed(`Run failed: ${e}`);
