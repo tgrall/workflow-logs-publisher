@@ -35,15 +35,8 @@ export async function run(): Promise<void> {
           
         core.info(`Getting logs for ${jobs.length} jobs for workflow ${workflowId}`);
         for (const j of jobs) {
-            const lines: string[] = await gh.fetchLogsForJob(client, repo, j);
-            core.debug(`Fetched ${lines.length} lines for job ${j.name}`);
-      
-            const tmpfile = `./out-${j.id}.log`;
+            const tmpfile: string = await gh.fetchLogsForJob(client, repo, j);      
             core.info(`Writing to ${tmpfile}`);
-            const out = createWriteStream(tmpfile);
-            out.write(lines);
-            out.end();            
-
         }
 
 

@@ -78,8 +78,12 @@ function fetchLogsForJob(httpClient, repo, job) {
         if (res.message.statusCode === undefined || res.message.statusCode >= 400) {
             throw new Error(`HTTP request failed: ${res.message.statusMessage}`);
         }
+        const tmpfile = `./out-${job.id}.log`;
         const body = yield res.readBody();
-        return body.split('\n');
+        const out = (0, fs_1.createWriteStream)(tmpfile);
+        out.write(body);
+        out.end();
+        return tmpfile;
     });
 }
 exports.fetchLogsForJob = fetchLogsForJob;
@@ -125,7 +129,6 @@ exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const gh = __importStar(__nccwpck_require__(5928));
-const fs_1 = __nccwpck_require__(5747);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -145,13 +148,8 @@ function run() {
             const jobs = yield gh.fetchJobs(client, repo, workflowId, []);
             core.info(`Getting logs for ${jobs.length} jobs for workflow ${workflowId}`);
             for (const j of jobs) {
-                const lines = yield gh.fetchLogsForJob(client, repo, j);
-                core.debug(`Fetched ${lines.length} lines for job ${j.name}`);
-                const tmpfile = `./out-${j.id}.log`;
+                const tmpfile = yield gh.fetchLogsForJob(client, repo, j);
                 core.info(`Writing to ${tmpfile}`);
-                const out = (0, fs_1.createWriteStream)(tmpfile);
-                out.write(lines);
-                out.end();
             }
         }
         catch (e) {

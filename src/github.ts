@@ -75,7 +75,7 @@ export async function fetchLogsForJob(
   httpClient: HttpClient,
   repo: string,
   job: Job
-): Promise<string[]> {
+): Promise<string> {
   const url = `${githubAPIUrl}/repos/${repo}/actions/jobs/${job.id}/logs`
   const res: HttpClientResponse = await httpClient.get(url)
 
@@ -83,6 +83,10 @@ export async function fetchLogsForJob(
     throw new Error(`HTTP request failed: ${res.message.statusMessage}`)
   }
 
-  const body: string = await res.readBody()
-  return body.split('\n')
+  const tmpfile = `./out-${job.id}.log`;
+  const body: string = await res.readBody();
+  const out = createWriteStream(tmpfile);
+  out.write(body);
+  out.end();   
+  return tmpfile; 
 }
