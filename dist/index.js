@@ -76,7 +76,7 @@ function fetchLogsForJob(httpClient, repo, job) {
         const url = `${githubAPIUrl}/repos/${repo}/actions/jobs/${job.id}/logs`;
         const res = yield httpClient.get(url);
         if (res.message.statusCode === undefined || res.message.statusCode >= 400) {
-            throw new Error(`HTTP request failed: ${res.message.statusMessage} (${url})`);
+            throw new Error(`HTTP request failed: ${res.message.statusCode}:${res.message.statusMessage}  (${url})`);
         }
         const tmpfile = `./out-${job.id}.log`;
         const body = yield res.readBody();

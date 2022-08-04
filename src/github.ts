@@ -80,7 +80,7 @@ export async function fetchLogsForJob(
   const res: HttpClientResponse = await httpClient.get(url)
 
   if (res.message.statusCode === undefined || res.message.statusCode >= 400) {
-    throw new Error(`HTTP request failed: ${res.message.statusMessage} (${url})`)
+    throw new Error(`HTTP request failed: ${res.message.statusCode}:${res.message.statusMessage}  (${url})`)
   }
 
   const tmpfile = `./out-${job.id}.log`;
