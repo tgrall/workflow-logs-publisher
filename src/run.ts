@@ -20,7 +20,9 @@ export function getCommaSeparatedInput(value: string): string[] {
 export async function run(): Promise<void> {
     try {
         const ghToken: string = core.getInput('repo-token', {required: true});
+        const saveArtifact: boolean = (core.getInput('save-artifact', {required: false}).toLowerCase() === 'true') || false;
         const jobNames: string = core.getInput('job-names', {required: false}) || '';
+        
         const allowList = getCommaSeparatedInput(jobNames);
         // authenticated client to call APIs
         const client: HttpClient = gh.getClient(ghToken);
@@ -62,9 +64,9 @@ export async function run(): Promise<void> {
                 return false;
             }
         } )        
-
-        const uploadResult = await artifactClient.uploadArtifact("job-logs", workflowLogFiles, ".", options)
-
+        if (saveArtifact) {
+            const uploadResult = await artifactClient.uploadArtifact("job-logs", workflowLogFiles, ".", options)
+        }
     } catch (e) {
         core.setFailed(`Run failed: ${e}`);
     }

@@ -168,6 +168,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const ghToken = core.getInput('repo-token', { required: true });
+            const saveArtifact = (core.getInput('save-artifact', { required: false }).toLowerCase() === 'true') || false;
             const jobNames = core.getInput('job-names', { required: false }) || '';
             const allowList = getCommaSeparatedInput(jobNames);
             // authenticated client to call APIs
@@ -201,7 +202,9 @@ function run() {
                     return false;
                 }
             });
-            const uploadResult = yield artifactClient.uploadArtifact("job-logs", workflowLogFiles, ".", options);
+            if (saveArtifact) {
+                const uploadResult = yield artifactClient.uploadArtifact("job-logs", workflowLogFiles, ".", options);
+            }
         }
         catch (e) {
             core.setFailed(`Run failed: ${e}`);
