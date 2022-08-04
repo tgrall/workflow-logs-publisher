@@ -46,7 +46,6 @@ export async function run(): Promise<void> {
         core.info( JSON.stringify(jobs, null, 2) );
         for (const j of jobs) {
             const tmpfile: string = await gh.fetchLogsForJob(client, repo, j);      
-            core.info(`Writing to ${tmpfile}`);
             workflowLogFiles.push(tmpfile);
         }
         core.setOutput('workflow-log-file', workflowLogFiles );

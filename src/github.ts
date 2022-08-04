@@ -1,5 +1,7 @@
 import {HttpClient, HttpClientResponse} from '@actions/http-client'
 import {createWriteStream} from 'fs'
+import * as core from '@actions/core'
+
 
 const githubAPIUrl = 'https://api.github.com'
 
@@ -85,6 +87,8 @@ export async function fetchLogsForJob(
 
   const tmpfile = `./out-${job.id}.log`;
   const body: string = await res.readBody();
+  core.info(body);
+  core.info(`Writing ${tmpfile}`)
   const out = createWriteStream(tmpfile);
   out.write(body);
   out.end();   

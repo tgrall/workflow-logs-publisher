@@ -6,6 +6,25 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -19,6 +38,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.fetchLogsForJob = exports.fetchLogsForWorkflow = exports.fetchJobs = exports.getClient = void 0;
 const http_client_1 = __nccwpck_require__(9925);
 const fs_1 = __nccwpck_require__(5747);
+const core = __importStar(__nccwpck_require__(2186));
 const githubAPIUrl = 'https://api.github.com';
 function getClient(ghToken) {
     return new http_client_1.HttpClient('gh-http-client', [], {
@@ -80,6 +100,8 @@ function fetchLogsForJob(httpClient, repo, job) {
         }
         const tmpfile = `./out-${job.id}.log`;
         const body = yield res.readBody();
+        core.info(body);
+        core.info(`Writing ${tmpfile}`);
         const out = (0, fs_1.createWriteStream)(tmpfile);
         out.write(body);
         out.end();
@@ -162,7 +184,6 @@ function run() {
             core.info(JSON.stringify(jobs, null, 2));
             for (const j of jobs) {
                 const tmpfile = yield gh.fetchLogsForJob(client, repo, j);
-                core.info(`Writing to ${tmpfile}`);
                 workflowLogFiles.push(tmpfile);
             }
             core.setOutput('workflow-log-file', workflowLogFiles);
