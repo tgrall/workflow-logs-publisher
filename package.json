@@ -22,7 +22,7 @@
     "node",
     "setup"
   ],
-  "author": "",
+  "author": "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",
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.6.0"
